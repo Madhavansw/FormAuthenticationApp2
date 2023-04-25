@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div class="panel-group">
+
+    <div class="form-group">
+        @Html.Label("Country", new { @class = " control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("countryIddll",
+           new SelectList((List<SelectListItem>)ViewBag.contry, "Value", "Text"),
+           new {@class= "form-control" })
+            @Html.ValidationMessage("countryId")
+
+        </div>
+
+    </div>
+
+
+
+    <div class="form-group">
+        @Html.Label("State", new { @class = " control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("stateIdddl", 
+           new List<SelectListItem>(),"Select item",
+           new {@class = "form-control" })
+            @Html.ValidationMessage("stateId")
+
+        </div>
+
+
+
+    </div>
+
+
+    <div class="form-group">
+        @Html.Label("city", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("cityIdddl", new List<SelectListItem>(),
+           "select item", new {@class = "form-control" })
+            @Html.ValidationMessage("cityId")
+
+        </div>
+
+    </div>
+
+    
+
+</div>
+
+<div class="form-group">
+
+    <div>
+        <h3>Details:</h3>
+    </div>
+    
+   
+
+        <div class="col-lg-10" style=" margin-top:100px">
+            
+               @Html.ListBox("stListBox", new List<SelectListItem>(), new { @class = "form-control" })
+
+           
+        </div>
+    <hr />
+
+
+    <div class="col-lg-10">
+        <input type="button" value="ShowMe" />
+
+    </div>
+   
+    
+</div>
+<hr />
+<script src="~/Scripts/jquery-3.4.1.min.js">
+
+</script>
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+
+        $(":button").click(function () {
+
+
+            /*  $("#hdnProjectName").val($(this).find("option:selected").text());*/
+            //$("#yourdropdownid").children("option").filter(":selected").text()
+
+            var ddlcount = $("#countryIddll").children("option").filter(":selected").text();
+            var ddlstate = $("#stateIdddl").children("option").filter(":selected").text();
+            var ddlcity = $("#cityIdddl").children("option").filter(":selected").text();
+
+           /* $('#RequestedHardware').append('<option>' + newListValue + '</option>');*/
+
+            $("#stListBox").append('<option>' + ddlcount + '</option>');
+            $("#stListBox").append('<option>' + ddlstate + '</option>');
+            $("#stListBox").append('<option>' + ddlcity + '<option>');
+
+        });
+
+
+
+        $("#stateIdddl").on("change", function () {
+
+            var q = $("#stateIdddl").val();
+            $.ajax(
+                {
+                    url: '/Cnstc/GetCityDataById?stateId=' + q,
+                    type: "GET",
+                    data: "",
+                    contentType: 'application/json; charset= utf-8',
+                    success: function (data) {
+
+                        
+                        $('#cityIdddl').find("option").remove();
+
+                        $(data).each(function (index, item) {
+
+                            $('#cityIdddl')
+                                .append($('<option></option>')
+                                .val(item.Value)
+                                .html(item.Text))
+
+                        });
+
+                    },
+                    error: function () {
+                        alert("Error is happening  at Client Side Execution ")
+                    }
+
+                       
+
+                });
+
+        });
+
+
+
+
+
+
+        $("#countryIddll").on("change", function () {
+
+           /* alert($(this).find("option:selected").text());*/
+
+           /* alert($(this).attr(' :select').val());*/
+
+            var q = $("#countryIddll").val();
+
+            //$("#dropdownid").change(function () {
+            //    alert($(this).find("option:selected").text());
+            //});
+
+            $.ajax(
+                {
+                    url: '/Cnstc/GetStateDataById?countryId=' + q,
+                    type: 'GET',
+                    data: "",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+
+
+                        // first remove the current options if any
+                        $('#stateIdddl').find('option').remove();
+
+                        // next iterate thru your object adding each option to the drop down\    
+                        $(data).each(function (index, item) { // GETTING ERROR HERE
+                           
+
+                            $('#stateIdddl').append($('<option></option>').val(item.Value).html(item.Text));
+                        });
+
+
+
+                    },
+
+
+
+
+                     
+                  
+                    error: function () {
+                        alert("error");
+                    }
+                });
+        });
+    });
+
+
+
+
+
+
+
+
+    //function SelectedIndexChanged() {
+
+    //    $.ajax(
+    //        {
+    //            url: '/Cnstc/GetStateDataById?countryId=' + $(this).attr("value"),
+    //            type: 'GET',
+    //            data: "",
+    //            contentType: 'application/json; charset=utf-8',
+    //            success: function (data) {
+    //                $("#stateId").html(data);
+    //            },
+    //            error: function () {
+    //                alert("error");
+    //            }
+    //        });
+    //}
+
+
+</script>
+
+
+
+
+
+ 
+

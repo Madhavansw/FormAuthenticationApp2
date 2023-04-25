@@ -1,0 +1,453 @@
+﻿@model DropDownApp.Data.Emp2
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("index", "Image", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Emp2</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @*<div class="form-group">
+        @Html.LabelFor(model => model.EmpId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.EmpId, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EmpId, "", new { @class = "text-danger" })
+        </div>
+    </div>*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label>Image</label>
+        <div class="col-md-10">
+
+            <input type="file" id="img" name="img" multiple="multiple" />
+      
+          
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    <h1>
+        
+    </h1>
+   
+</div>
+
+
+<div>
+    <table id="employee" class="table table-bordered" style="margin-top:10px;">  
+                <thead class="bg-danger text-center text-white">  
+                    <tr>  
+                        <th>Name</th>  
+                        <th>Description</th>  
+                        <th>Photo</th>  
+                         
+                    </tr>  
+                </thead>  
+                <tbody></tbody>  
+            </table>  
+</div>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+<script src="~/Scripts/jquery-3.6.4.min.js">
+
+</script>
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+
+        $("#employee").html("Looading------");
+
+        $.get("/Image/ShowImageData", null, Databind)
+
+        function Databind(data) {
+
+            debugger
+            var employeeTable = $('#employee tbody');
+            employeeTable.empty();
+            $(data).each(function (index, emp) {
+                employeeTable.append('<tr><td>'
+                    + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+                    + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" + '</td></tr>');
+            });
+            
+        }
+
+
+
+
+
+
+       
+
+        //$.ajax({
+        //    url: "Image/ShowImageData",
+        //    method: "GET",
+        //    success: function (data) {
+
+        //        var employeeTable = $('#employee tbody');
+        //        employeeTable.empty();
+        //        $(data).each(function (index, emp) {
+        //            employeeTable.append('<tr><td>'
+        //                + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+        //                + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" + '</td></tr>');
+        //        });
+
+        //    },
+        //    failure: function (response) {
+
+        //        alert(response.responseText);
+
+        //    },
+        //    error: function (response) {
+        //        alert(response.responseText);
+        //    }
+
+        //});
+
+
+
+        //$('#employee tbody').load({
+        //    url: "Image/ShowImageData",
+        //    success: function (data) {
+
+        //        var employeeTable = $('#employee tbody');
+        //        employeeTable.empty();
+        //        $(data).each(function (index, emp) {
+        //            employeeTable.append('<tr><td>'
+        //                + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+        //                + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" + '</td></tr>');
+        //        });
+
+
+        //    }
+           
+
+
+
+        //});
+
+
+      
+        //$(selector).load(URL, data, callback);
+
+
+        function LooadingTable() {
+
+       
+
+
+            $.ajax({
+                url: "/Image/ShowImageData",
+                method: "GET",
+                success: function (data) {
+               
+
+                    var employeeTable = $('#employee tbody');
+                    employeeTable.empty();
+                    $(data).each(function (index, emp) {
+                        employeeTable.append('<tr><td>'
+                            + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+                            + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" + '</td></tr>');
+                    });
+
+                },
+                failure: function (response) {
+                    debugger
+                    alert(response.responseText);
+                    debugger
+
+                },
+                error: function (response) {
+                    debugger
+                    alert(response.responseText);
+                }
+
+            });
+
+        }
+
+       
+
+
+      
+        
+
+
+        });
+
+    
+
+    //$("#btnPost").click(function () {
+    //    var employee = new Object();
+    //    employee.Name = $('#txtName').val();
+    //    employee.Address = $('#txtDesignation').val();
+    //    employee.Location = $('#txtLocation').val();
+    //    if (employee != null) {
+    //        $.ajax({
+    //            type: "POST",
+    //            url: "/JQueryAjaxCall/AjaxPostCall",
+    //            data: JSON.stringify(employee),
+    //            contentType: "application/json; charset=utf-8",
+    //            dataType: "json",
+    //            success: function (response) {
+    //                if (response != null) {
+    //                    alert("Name : " + response.Name + ", Designation : " + response.Designation + ", Location :" + response.Location);
+    //                } else {
+    //                    alert("Something went wrong");
+    //                }
+    //            },
+    //            failure: function (response) {
+    //                alert(response.responseText);
+    //            },
+    //            error: function (response) {
+    //                alert(response.responseText);
+    //            }
+    //        });
+    //    }
+    //});
+
+    $(":button").click(function () {
+
+
+
+
+        //var data = {
+        //    Name: $('#Name').val(),
+        //    Family: $('#F').val(),
+        //    CityId: $('#CityId').val(),
+        //    CellPhone: $('#CellPhone').val()
+        //};
+
+        //var formData = new FormData();
+
+        //formData.append("data", JSON.stringify(data));
+
+        //var totalFiles = document.getElementById('inputFile').files.length;
+        //for (var i = 0; i < totalFiles; i++) {
+        //    var file = document.getElementById('inputFile').files[i];
+        //    formData.append("httpPostedFileBase", file);
+        //}
+
+        //var data = {
+        //    Name: $('#Name').val(),
+        //    Description: $('#Description').val(),
+            
+        //};
+
+        var Data = new FormData();
+
+        Data.append("Name", $('#Name').val());
+        Data.append("Description", $('#Description').val())
+        var Imagefile = $("#img").get(0).files;
+        Data.append("Imagefile", Imagefile[0])
+
+
+        //var totalFiles = $('#img').files.length;
+        //for (var i = 0; i < totalFiles; i++) {
+        //    var Imagefile = ('#img').files[i];
+        //    formData.append("httpPostedFileBase", Imagefile);
+        //}
+
+
+
+
+
+
+
+
+        //var fileUpload = $("#img").get(0);
+        //var files = fileUpload.files;
+
+        //// Create FormData object  
+        ////var fileData = new FormData();
+
+        //// Looping over all files and add it to FormData object  
+        //for (var i = 0; i < files.length; i++) {
+        //    fileData.append(files[i].name, files[i]);
+        //}
+
+
+        //var employee = new Object();
+        //employee.Name = $('#Name').val();
+        //employee.Description = $('#Description').val();
+        //employee.Imagefile = $('#img').get(0);
+
+        //var fileUpload = $("#img").get(0);
+        //var files = fileUpload.files;
+
+        //// Create FormData object  
+        ////var fileData = new FormData();
+
+        //// Looping over all files and add it to FormData object  
+        //for (var i = 0; i < files.length; i++) {
+        //    employee.append(files[i].name, files[i]);
+        //}
+
+
+
+        if (Data != null) {
+            $.ajax({
+                type: "POST",
+                url: "/Image/index",
+                data: Data,
+                processData: false,
+                contentType: false,
+
+                success: function ( data) {
+
+                    var employeeTable = $('#employee tbody');
+                    employeeTable.empty();
+                    $(data).each(function (index, emp) {
+                        employeeTable.append('<tr><td>'
+                            + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+                            + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" + '</td></tr>');
+                    });
+
+                   /* LooadingTable();*/
+               
+
+            },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    });
+
+
+
+
+
+
+
+
+
+    function getAllEmployees() {
+
+        //$.ajax({
+        //    url: 'Image/ShowImageData',
+        //    dataType: "json",
+        //    method: 'GET',
+        //    success: function (data) {
+        //        var employeeTable = $('#employee tbody');
+        //        employeeTable.empty();
+
+        //        $(data).each(function (index, emp) {
+        //            employeeTable.append('<tr><td>' + emp.ID + '</td><td>'
+        //                + emp.Name + '</td><td>' + emp.Gender + '</td><td>'
+        //                + emp.Phone + '</td><td>' + emp.Email + '</td><td>'
+        //                + emp.Age + '</td><td>' + emp.Salary + '</td></tr>');
+        //        });
+        //    },
+        //    error: function (err) {
+        //        console.log(err);
+        //    }
+        //});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $.ajax({
+            url: '/Image/ShowImageData',
+            dataType: "json",
+            method: 'GET',
+            success: function (data) {
+                var employeeTable = $('#employee tbody');
+                employeeTable.empty();
+
+
+                //function previewFile() {
+                //    const preview = document.querySelector('img');
+                //    const file = $('#studentimage')[0].files[0];
+                //    const reader = new FileReader();
+
+                //    reader.addEventListener("load", function () {
+                //        // convert image file to base64 string
+                //        preview.src = reader.result;
+                //    }, false);
+
+                //    if (file) {
+                //        reader.readAsDataURL(file);
+                //    }
+                //}
+
+
+
+
+                $(data).each(function (index, emp) {
+
+                  
+
+
+
+
+                    employeeTable.append('<tr><td>'
+                        + emp.Name + '</td><td>' + emp.Description + '</td><td>'
+                        + "<img  src='" + emp.Imagepath + "' style ='width:50px; height:50px' />" +'</td></tr>');
+                });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+
+
+
+
+
+
+</script>

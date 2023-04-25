@@ -1,0 +1,1410 @@
+﻿@*@model IEnumerable<DropDownApp.ModelView.PersonModelView>*@
+
+@model PagedList.IPagedList<DropDownApp.ModelView.PersonModelView>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style type="text/css">
+
+    input:invalid {
+        border: 2px dashed red;
+    }
+
+    input:valid {
+        border: 2px solid black;
+    }
+</style>
+
+<div style="float:right; margin-right:20px">
+    @Html.ActionLink("LogOut", "LogOut")
+
+</div>
+
+
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+
+
+
+    if (User.IsInRole("Administator"))
+    {
+        <p>
+            <button type="button"
+                    data-target="#myModal"
+                    data-toggle="modal">
+                Add
+            </button>
+
+
+        </p>
+    }
+
+}
+
+
+
+<div>
+    @using (Html.BeginForm("Index", "Person", FormMethod.Get))
+    {
+
+
+        <p>
+            Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+            <input type="submit" value="Search" />
+        </p>
+
+    }
+</div>
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+
+        </th>
+        <th>
+            @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.Description, currentFilter = ViewBag.CurrentFilter })
+
+
+        </th>
+        <th>
+            @Html.ActionLink("LogOn", "Index", new { sortLogOn = ViewBag.LogOn, CurrentLogOn = ViewBag.CurrentLogOn })
+        </th>
+        <th>
+            @Html.ActionLink("Image", "Index", new { sortImage = ViewBag.Image, CurrentImage = ViewBag.CurrentImage })
+        </th>
+
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Name)
+                @*  @Html.DisplayFor(modelItem => item.Name)*@
+            </td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Description)
+                @* @Html.DisplayFor(modelItem => item.Description)*@
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.LogOnDateTime)
+                @* @Html.DisplayFor(modelItem => item.Description)*@
+            </td>
+            <td>
+
+                @*<img src="~/Image/@Html.DisplayFor(modelItem =>item.ImagePath)"
+                          style="height:200px;width:200px;" />
+
+                    <img src="~/Image/@item.ImagePath" style="width:50px;height:50px" />*@
+
+                @* <img src="~/Image/eiffel-tower-1305482.jpg" style="width:50px;height:50px" />*@
+
+                <img src="@item.ImagePath"
+                     style="width:50px;height:50px" />
+            </td>
+
+            <td>
+
+
+             @*   @Html.ActionLink("Edit", "EditPerson", new { Id = item.Id })*@
+
+                @if (User.IsInRole("Administator"))
+                {
+
+                <div>
+
+
+                    <button type="button" onclick="DeletePerson(@item.Id)" >
+                        Delete
+                    </button>
+
+                    <button type="button"
+                            data-target="#myModalEdit"
+                            data-toggle="modal"
+                            onclick="EditPersonForm(@item.Id)">
+                        Edit
+                    </button>
+
+
+
+
+                </div>
+
+                }
+
+
+            </td>
+
+        </tr>
+    }
+
+</table>
+
+
+
+
+<div class="modal fade" id="myModal"
+     tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formCreate" method="post" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" placeholder="Name" />
+                        <label id="lblName"></label>
+
+
+
+
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="password" />
+                        <label id="lblpassword"></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="Description" placeholder="Description" />
+                        <label id="lblDescription"></label>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="Image">Photo</label>
+                        <input type="file" class="form-control" id="Image" placeholder="Image" />
+                        <label id="lblImage"></label>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IsTrained">IsTrained</label>
+                        <input type="checkbox" class="form-control" id="IsTrained" name="IsTrained" />
+                        <label id="lblIsTrained"></label>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="IsActive">
+                            IsActive:
+                        </label>
+                        <input type="checkbox"
+                               class="form-control"
+                               id="IsActive"
+                               name="IsActive" />
+                        <label id="lblIsTested"></label>
+
+                    </div>
+
+                    <div id="chlist">
+
+                        <div class="form-group">
+                            <label for="Roles">
+                                Roles:
+                            </label>
+                            <br />
+                            <br />
+                            <input type="checkbox" id="Roles1" name="Roles" value="Support">
+                            <label for="Roles1"> Support</label><br>
+                            <input type="checkbox" id="Roles2" name="Roles" value="Administator">
+                            <label for="Roles2"> Administator</label><br>
+                            <input type="checkbox" id="Roles3" name="Roles" value="Site">
+                            <label for="Roles3"> Site</label><br>
+                            <input type="checkbox" id="Role4" name="Roles" value="QC">
+                            <label for="Roles4"> QC</label><br>
+                            <input type="checkbox" id="Roles5" name="Roles" value="Radiologiest">
+                            <label for="Roles5"> Radiologiest</label><br>
+                            <input type="checkbox" id="Roles6" name="Roles" value="Data Review">
+                            <label for="Roles6"> Data Review</label><br>
+                            <input type="checkbox" id="Roles7" name="Roles" value="CRA">
+                            <label for="Roles7"> CRA</label><br>
+
+
+                            @*<select name="Roles" class="form-control"  id="Roles">
+                                    <option value="0"> select Roles</option>
+                                    <option value="Support">Support</option>
+                                    <option value="Administator">Administator</option>
+                                    <option value="Site">Site</option>
+                                    <option value="QC">QC</option>
+                                    <option value="Radiologiest">Radiologiest</option>
+                                    <option value="Data Review">Data Review</option>
+                                    <option value="CRA">CRA</option>
+                                    <option value="InternalUploader">InternalUploader</option>
+                                    <option value="QC Management">QC Management</option>
+                                    <option value="Reader Management">Reader Management</option>
+                                    <option value="Site Management">Site Management</option>
+                                </select>*@
+
+                            <label id="lblRoles">
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="return submitform()" id="btnAdd">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;"
+                        onclick="">
+                    Update
+                </button>
+                <button type="button" class="btn btn-default" onclick="closeForm()">Close</button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModalEdit"
+     tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Edit Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formEdit" method="post" enctype="multipart/form-data">
+
+
+                    <div>
+                        <input type="hidden" id="EmpId" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="EName" placeholder="Name" />
+                        <label id="lblName"></label>
+                    </div>
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input type="text" class="form-control" id="EPassword" placeholder="Password" />
+                        <label id="lblPassword"></label>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="EDescription" placeholder="Description" />
+                        <label id="lblDescription"></label>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="EImage">Photo</label>
+                        <img class="form-control" id="EImage" />
+                        <input type="file" id="FileImage" class="form-control" />
+
+                        <label id="lblImage"></label>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IsTrained">IsTrained</label>
+                        <input type="checkbox" class="form-control" id="EIsTrained" name="EIsTrained" />
+                        <label id="lblIsTrained"></label>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="IsActive">
+                            IsActive:
+                        </label>
+                        <input type="checkbox" class="form-control" id="EIsActive" name="EIsActive" />
+                        <label id="lblIsTested"></label>
+
+                    </div>
+
+                    <div id="Echlist">
+
+                        <div class="form-group">
+                            <label for="Roles">
+                                Roles:
+                            </label>
+                            <br />
+                            <br />
+                            <input type="checkbox" id="ERoles1" name="ERoles" value="Support">
+                            <label for="ERoles1"> Support</label><br>
+                            <input type="checkbox" id="ERoles2" name="ERoles" value="Administator">
+                            <label for="ERoles2"> Administator</label><br>
+                            <input type="checkbox" id="ERoles3" name="ERoles" value="Site">
+                            <label for="ERoles3"> Site</label><br>
+                            <input type="checkbox" id="ERoles4" name="ERoles" value="QC">
+                            <label for="ERoles4"> QC</label><br>
+                            <input type="checkbox" id="ERoles5" name="ERoles" value="Radiologiest">
+                            <label for="ERoles5"> Radiologiest</label><br>
+                            <input type="checkbox" id="ERoles6" name="ERoles" value="Data Review">
+                            <label for="ERoles6"> Data Review</label><br>
+                            <input type="checkbox" id="ERoles7" name="ERoles" value="CRA">
+                            <label for="ERoles7"> CRA</label><br>
+
+
+                            @*<select name="Roles" class="form-control"  id="Roles">
+                                    <option value="0"> select Roles</option>
+                                    <option value="Support">Support</option>
+                                    <option value="Administator">Administator</option>
+                                    <option value="Site">Site</option>
+                                    <option value="QC">QC</option>
+                                    <option value="Radiologiest">Radiologiest</option>
+                                    <option value="Data Review">Data Review</option>
+                                    <option value="CRA">CRA</option>
+                                    <option value="InternalUploader">InternalUploader</option>
+                                    <option value="QC Management">QC Management</option>
+                                    <option value="Reader Management">Reader Management</option>
+                                    <option value="Site Management">Site Management</option>
+                                </select>*@
+
+                            <label id="lblRoles">
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnEditForm" onclick="EditForm()">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;"
+                        onclick="">
+                    Update
+                </button>
+                <button type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal"
+                        onclick="closeForm()">
+                    Close
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+    @*@Html.PagedListPager(Model,page => Url.Action("Index" ,
+        new  { Page,sortOrder = ViewBag.CurrentSort,currentFilter = ViewBag.CurrentFilter  }))*@
+
+
+    <script src="~/Scripts/jquery-3.6.4.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+
+
+
+    <script type="text/javascript">
+
+
+
+
+
+        function DeletePerson(id) {
+            alert("Are you interesting to delete Record?");
+
+            $.ajax(
+                {
+
+                    method: "Post",
+                    url: "Person/DeletePerson?Id=" + id,
+                    success: function (result) {
+
+                        window.location = "Person/Index";
+                    }
+
+                });
+
+
+        }
+
+        //btnEditForm
+
+        //document.getElementById("btnEditForm").addEventListener('button',
+        //    function (event) {
+
+        //        event.preventDefault();
+
+
+
+
+
+
+
+        //        //formEdit
+        //        //document.querySelector("form")
+        //        //var formData = new FormData(document.querySelector("formEdit"));
+        //        var formData = new FormData(document.getElementById("formEdit"));
+
+
+
+        //        var txtName = document.getElementById("EName").value;
+        //        var txtDescription = document.getElementById("EDescription").value;
+        //        var txtImage = document.getElementById("FileImage").files[0];
+        //        //document.getElementById('Image').files[0]
+        //        var cIsActive = document.getElementById("EIsActive").checked;
+        //        var cIsTrained = document.getElementById("EIsTrained").checked;
+
+        //        ccList = document.getElementById("Echlist");
+        //        checkboxList = ccList.querySelectorAll('input[type="checkbox"]');
+
+
+        //        var itemForm = document.getElementById('Echlist'); // getting the parent container of all the checkbox inputs
+        //        var checkBoxes = itemForm.querySelectorAll('input[type="checkbox"]');
+
+        //        var selectedList = [];
+
+        //        checkboxList.forEach(item => {
+        //            if (item.checked) {
+
+        //                selectedList.push(item.value);
+        //            }
+        //        });
+
+        //        formData.append("Name", txtName);
+        //        formData.append("EmpId", id)
+        //        formData.append("Description", txtDescription);
+        //        formData.append("IsActive", cIsActive);
+        //        formData.append("IsTrained", cIsTrained);
+        //        formData.append("Roles", selectedList);
+        //        formData.append("FilePosted", txtImage);
+
+
+
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "/Person/EditPerson",
+        //            data: formData,
+        //            processData: false,
+        //            contentType: false,
+
+        //            success: function (response) {
+        //                window.location = "/Person/EditPerson"
+        //            },
+        //            failure: function (response) {
+        //                alert(response.responseText);
+        //            },
+        //            error: function (response) {
+        //                alert(response.responseText);
+        //            }
+        //        });
+
+
+
+
+
+
+
+        //    }
+        //);
+
+
+
+
+        function EditForm() {
+
+            var formData = new FormData(document.getElementById("formEdit"));
+            var id = document.getElementById("EmpId").value;
+            var txtPassword = document.getElementById("EPassword").value;
+            var txtName = document.getElementById("EName").value;
+            var txtDescription = document.getElementById("EDescription").value;
+            var txtImage = document.getElementById("FileImage").files[0];
+            //document.getElementById('Image').files[0]
+            var cIsActive = document.getElementById("EIsActive").checked;
+            var cIsTrained = document.getElementById("EIsTrained").checked;
+
+            ccList = document.getElementById("Echlist");
+            checkboxList = ccList.querySelectorAll('input[type="checkbox"]');
+            var itemForm = document.getElementById('Echlist'); // getting the parent container of all the checkbox inputs
+            var checkBoxes = itemForm.querySelectorAll('input[type="checkbox"]');
+
+            var selectedList = [];
+
+            checkboxList.forEach(item => {
+                if (item.checked) {
+
+                    selectedList.push(item.value);
+                }
+            });
+            formData.append("Id", id);
+            formData.append("Name", txtName);
+            formData.append("Description", txtDescription);
+            formData.append("IsActive", cIsActive);
+            formData.append("IsTrained", cIsTrained);
+            formData.append("Roles", selectedList);
+            formData.append("FilePosted", txtImage);
+            formData.append("Password", txtPassword)
+
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Person/EditPerson",
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function (response) {
+                    window.location = "/Person/Index"
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function EditPersonForm(id) {
+
+            event.preventDefault();
+
+            var Rrolelist = ["Support", "Administator", "Site", "QC", "Radiologiest", "Data Review", "CRA"];
+
+            var empId = document.getElementById("EmpId");
+            var txtName = document.getElementById("EName");
+            var password = document.getElementById("EPassword");
+            var txtDescription = document.getElementById("EDescription");
+            var Image = document.getElementById("EImage");
+            //document.getElementById('Image').files[0]
+            var cbIsActive = document.getElementById("EIsActive");
+            var cbIsTrained = document.getElementById("EIsTrained");
+            //var rolelist = document.querySelectorAll('input[type ="checkbox"]');
+
+            var itemForm = document.getElementById('Echlist'); // getting the parent container of all the checkbox inputs
+            var checkBoxes = itemForm.querySelectorAll('input[type="checkbox"]');
+            $.ajax({
+                url: "/Person/GetPersonById?Id=" + id,
+                type: "get",
+                success: function (Result) {
+
+                    if (Result != null) {
+
+                        empId.value = Result.Id;
+                        txtName.value = Result.Name;
+                        password.value = Result.Password;
+                        txtDescription.value = Result.Description;
+                        cbIsActive.checked = Result.IsActive;
+                        cbIsTrained.checked = Result.IsTrained;
+                        //Image.src = "data:image/gif;base64 Result.ImagePath"
+
+                        Image.src = Result.ImagePath;
+                        ;
+                        Image.style = "Width:50px;Height:50px";
+
+                        if (Result.Roles != null) {
+                            var roleList = Result.Roles.split(',');
+
+                            for (let i = 0; i < roleList.length; i++) {
+
+                                for (let j = 0; j < checkBoxes.length; j++) {
+
+                                    if (roleList[i] == checkBoxes[j].value) {
+
+                                        checkBoxes[j].value = roleList[i];
+                                        checkBoxes[j].checked = true;
+
+                                    }
+
+                                }
+
+
+
+
+                            }
+
+
+                        }
+                    }
+                }
+
+            });
+
+
+
+            //document.getElementById("btnEditForm").addEventListener("submit",
+            //    function (event) {
+
+            //        event.preventDefault();
+
+
+
+
+
+
+            //        //formEdit
+            //        //document.querySelector("form")
+            //        //var formData = new FormData(document.querySelector("formEdit"));
+            //        var formData = new FormData(document.getElementById("formEdit"));
+
+
+
+            //        var txtName = document.getElementById("EName").value;
+            //        var txtDescription = document.getElementById("EDescription").value;
+            //        var txtImage = document.getElementById("FileImage").files[0];
+            //        //document.getElementById('Image').files[0]
+            //        var cIsActive = document.getElementById("EIsActive").checked;
+            //        var cIsTrained = document.getElementById("EIsTrained").checked;
+
+            //        ccList = document.getElementById("Echlist");
+            //        checkboxList = ccList.querySelectorAll('input[type="checkbox"]');
+
+
+            //        var itemForm = document.getElementById('Echlist'); // getting the parent container of all the checkbox inputs
+            //        var checkBoxes = itemForm.querySelectorAll('input[type="checkbox"]');
+
+            //        var selectedList = [];
+
+            //        checkboxList.forEach(item => {
+            //            if (item.checked) {
+
+            //                selectedList.push(item.value);
+            //            }
+            //        });
+
+            //        formData.append("Name", txtName);
+            //        formData.append("EmpId", id)
+            //        formData.append("Description", txtDescription);
+            //        formData.append("IsActive", cIsActive);
+            //        formData.append("IsTrained", cIsTrained);
+            //        formData.append("Roles", selectedList);
+            //        formData.append("FilePosted", txtImage);
+
+
+
+            //        $.ajax({
+            //            type: "POST",
+            //            url: "/Person/EditPerson",
+            //            data: formData,
+            //            processData: false,
+            //            contentType: false,
+
+            //            success: function (response) {
+            //                window.location = "/Person/EditPerson"
+            //            },
+            //            failure: function (response) {
+            //                alert(response.responseText);
+            //            },
+            //            error: function (response) {
+            //                alert(response.responseText);
+            //            }
+            //        });
+
+
+
+
+
+
+
+            //    }
+            //);
+
+
+
+
+        }
+
+
+        function submitform() {
+
+            var fd = new FormData(document.querySelector("form"));
+            var result = [];
+            var itemForm = document.getElementById('chlist'); // getting the parent container of all the checkbox inputs
+            var checkBoxes = itemForm.querySelectorAll('input[type="checkbox"]');
+            var file = document.getElementById('Image').files[0];
+            var Name = document.getElementById('Name').value;
+            var password = document.getElementById("password").value;
+            var Description = document.getElementById('Description').value;
+            var IsActive = document.getElementById("IsActive");
+            var IsTrained = document.getElementById("IsTrained");
+            var Roles = document.getElementsByName("Roles1");
+            var lblName = document.getElementById("lblName");
+            var lblDescription = document.getElementById("lblDescription");
+            var lblImage = document.getElementById("lblImage");
+            var lblIsTested = document.getElementById("lblIsTested");
+            var lblIsTrained = document.getElementById("lblIsTrained");
+            var lblRoles = document.getElementById("lblRoles");
+            var lblpasword = document.getElementById("lblpassword");
+
+
+            var txtpassword = document.getElementById("password");
+            txtpassword.addEventListener("keyup", function (ent) {
+                ent.preventDefault();
+                lblpasword.textContent = "";
+                lblpasword.style = "";
+                txtpassword.focus();
+
+
+            });
+
+
+
+            var txtIsTested = document.getElementById("IsActive");
+            txtIsTested.addEventListener("focus", function (event) {
+                event.preventDefault();
+                lblIsTested.textContent = "";
+                lblIsTested.style = "";
+                txtIsTested.focus();
+            });
+
+            var txtIsTrained = document.getElementById("IsTrained");
+            txtIsTrained.addEventListener("change", function (event) {
+                event.preventDefault();
+                lblIsTrained.textContent = "";
+                lblIsTrained.style = "";
+                txtIsTrained.focus();
+
+
+            });
+
+            checkBoxes.forEach(item => {
+
+
+                item.addEventListener('change', function (event) {
+                    event.preventDefault();
+
+                    if (!item.checked) {
+
+
+                        lblRoles.textContent = "Please check box";
+                        lblRoles.style = " color: red";
+
+                    }
+                    else {
+                        lblRoles.textContent = "";
+                        lblRoles.style = "";
+                    }
+
+
+
+                })
+
+            });
+
+            var txtName = document.getElementById("Name");
+            txtName.addEventListener("keyup", function (event) {
+                event.preventDefault();
+                lblName.textContent = "";
+                lblName.style = "";
+                txtName.focus();
+
+            });
+            var descriptionElement = document.getElementById("Description");
+            descriptionElement.addEventListener("keyup", function (event) {
+
+                event.preventDefault();
+                lblDescription.textContent = "";
+                lblDescription.style = "";
+                descriptionElement.focus();
+
+            });
+
+
+            var fileElement = document.getElementById("Image");
+            fileElement.addEventListener("focusin", function (event) {
+                event.preventDefault();
+                lblImage.textContent = "";
+                lblImage.style = "";
+
+            });
+
+
+            if (Name == "") {
+                lblName.textContent = "Please Enter Name";
+                lblName.style = "color: red";
+                if (Description == "") {
+                    lblDescription.textContent = "Please enter Description";
+                    lblDescription.style = "color:red";
+                }
+
+
+                if (password == "") {
+                    lblpasword.textContent = "Please Enter Password";
+                    lblpasword.style = "color:red";
+                }
+                if (file == null) {
+                    lblImage.textContent = "Please Upload Image";
+                    lblImage.style = "color: red";
+                }
+
+                //if (IsActive.checked != true) {
+                //    lblIsTested.textContent = "Please Select IsTested";
+                //    lblIsTested.style = "color: red";
+                //}
+
+                if (IsTrained.checked != true) {
+                    lblIsTrained.textContent = "Please Selecte IsTested";
+                    lblIsTrained.style = "color: red";
+                }
+
+                if (!fd.has("Roles1")) {
+                    lblRoles.textContent = "Please Select Roles!";
+                    lblRoles.style = "color:red";
+
+                }
+                return false;
+            }
+            else {
+                lblName.textContent = "";
+                lblName.style = "";
+            }
+            if (Description == "") {
+
+
+                lblDescription.textContent = "Please Enter Descripation";
+                lblDescription.style = "color: red";
+                if (Name == "") {
+                    lblName.textContent = "Please enter Name";
+                    lblName.style = "color:red"
+                }
+
+
+                if (password == "") {
+                    lblpasword.textContent = "Please Enter Password";
+                    lblpasword.style = "color:red";
+                }
+
+
+                if (file == null) {
+                    lblImage.textContent = "Please Upload Image";
+                    lblImage.style = "color: red";
+                }
+
+                if (!fd.has("Roles1")) {
+                    lblRoles.textContent = "Please Select Roles!";
+                    lblRoles.style = "color:red";
+
+                }
+
+
+
+
+                return false;
+            }
+
+            else {
+                lblDescription.textContent = "";
+                lblDescription.style = "";
+            }
+
+            if (file == null) {
+                lblImage.textContent = "Please Upload Files";
+                lblImage.style = "color: red";
+
+                if (Description == "") {
+                    lblDescription.textContent = "Please enter Description";
+                    lblDescription.style = "color:red"
+                }
+
+
+                if (!fd.has("Roles1")) {
+                    lblRoles.textContent = "Please Select Roles!";
+                    lblRoles.style = "color:red";
+
+                }
+
+                if (Name == "") {
+                    lblName.textContent = "Please  Enter Name!";
+                    lblImage.style = "color: red";
+                }
+
+                if (password == "") {
+                    lblpasword.textContent = "Please Enter Password";
+                    lblpasword.style = "color:red";
+                }
+
+                return false;
+
+
+
+
+            }
+            else {
+                lblImage.textContent = "";
+                lblImage.style = "";
+            }
+
+
+
+            //if (!fd.has("Roles1")) {
+            //    lblRoles.textContent = "Please Select Roles!";
+            //    lblRoles.style = "color:red";
+
+
+
+            //    if (IsActive.checked != true) {
+            //        lblIsTested.textContent = "Please Select IsTested";
+            //        lblIsTested.style = "color: red";
+            //    }
+            //    if (IsTrained.checked != true) {
+            //        lblIsTrained.textContent = "Please Selecte IsTested";
+            //        lblIsTrained.style = "color: red";
+            //    }
+
+
+
+            //    return false;
+
+            //}
+
+            //else {
+            //    lblRoles.textContent = "";
+            //    lblRoles.style = "";
+            //}
+
+            //if (IsActive.checked != true) {
+            //    lblIsTested.textContent = "Please Select IsActive";
+            //    lblIsTested.style = "color: red";
+
+
+
+
+            //    return false;
+
+
+
+            //}
+
+
+            //else {
+            //    lblIsTested.textContent = "";
+            //    lblIsTested.style = "";
+            //}
+
+            //if (IsTrained.checked != true) {
+            //    lblIsTrained.textContent = "Please Selecte Is Trained";
+            //    lblIsTrained.style = "color: red";
+
+            //    return false;
+
+            //}
+
+            //else {
+            //    lblIsTrained.textContent = "";
+            //    lblIsTrained.style = "";
+            //}
+
+
+
+            checkBoxes.forEach(item => { // loop all the checkbox item
+                if (item.checked) {  //if the check box is checked
+
+                    result.push(item.value); //stored the objects to result array
+                }
+            });
+
+            let CIsActive = false
+
+            if (IsActive.checked) {
+                CIsActive = true;
+            }
+            else {
+                CIsActive.value = false;
+            }
+
+            let CIsTrained = false;
+            if (IsTrained.checked) {
+                CIsTrained = true;
+            }
+            else {
+                CIsTrained = false
+            }
+
+
+
+
+            fd.append("FilePosted", file);
+            fd.append("Name", Name);
+            fd.append("Description", Description);
+            fd.append("IsActive", CIsActive);
+            fd.append("IsTrained", CIsTrained);
+            fd.append("password", password);
+            fd.append("Roles", result);
+            $.ajax({
+                url: "/Person/CreatePost",
+                type: "POST",
+
+                contentType: false,
+                processData: false,
+                data: fd,
+                success: function (result) {
+
+                    if (!result.isValid) {
+
+                        $("#myModal").modal('show');
+                        $("#myModalLabel").html(result.Msg);
+                    }
+                    else {
+
+                        window.location = "/Person/Index";
+                        $("#myModal").modal('show');
+
+
+                    }
+                }
+            });
+
+
+
+
+
+
+        }
+
+
+        // sumit form eding here
+
+
+
+
+        function closeForm() {
+
+            $("#Name").val("");
+            $("#Description").val("");
+            $("#Image").val("");
+            $("#myModalLabel").html("Add Employee");
+            $("#myModal").modal("hide");
+
+        }
+
+
+
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+        });
+
+
+
+
+
+
+                                                    //e.preventDefault();
+                                                    //var postdata = $('#form').serialize();
+                                                    //var file = document.getElementById('Image').files[0];
+                                                    //var username = document.getElementById('Name').value;
+                                                    //var password = document.getElementById('Description').value;
+                                                    ////$("#form").validate({
+                                                    ////    rules: {
+                                                    ////        Name: {
+                                                    ////            required: true,
+                                                    ////            minlength: 8
+                                                    ////        },
+                                                    ////        action: "required"
+                                                    ////    },
+                                                    ////    messages: {
+                                                    ////        Name: {
+                                                    ////            required: "Please enter some data",
+                                                    ////            minlength: "Your data must be at least 8 characters"
+                                                    ////        },
+                                                    ////        action: "Please provide some data"
+                                                    ////    }
+                                                    ////});
+
+
+                                                    ////$("#form").validate({
+                                                    ////    rules: {
+                                                    ////        Name: {
+                                                    ////            required: true,
+                                                    ////            minlength: 8
+                                                    ////        },
+                                                    ////        action: "required"
+                                                    ////    },
+                                                    ////    messages: {
+                                                    ////        Name: {
+                                                    ////            required: "Please enter some data",
+                                                    ////            minlength: "Your data must be at least 8 characters"
+                                                    ////        },
+                                                    ////        action: "Please provide some data"
+                                                    ////    }
+                                                    ////});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    ////if (username == "") {
+                                                    ////    alert("Enter UserName")
+                                                    ////    return false;
+                                                    ////}
+                                                    ////else if (password == "") {
+                                                    ////    alert("Enter Decscription");
+                                                    ////    return false;
+                                                    ////}
+                                                    ////else if (file == "") {
+                                                    ////    alert("Upload File ")
+                                                    ////    return false;
+                                                    ////}
+
+                                                    ////else {
+                                                    //var fd = new FormData();
+                                                    //fd.append("FilePosted", file);
+                                                    //fd.append("Name", username);
+                                                    //fd.append("Description", password);
+                                                    //$.ajax({
+                                                    //    url: "/Person/CreatePost",
+                                                    //    type: "POST",
+
+                                                    //    contentType: false,
+                                                    //    processData: false,
+                                                    //    data: fd,
+                                                    //    success: function (result) {
+
+                                                    //        if (!result.isValid) {
+
+                                                    //            $("#myModal").modal('show');
+                                                    //            $("#myModalLabel").html(result.Msg);
+                                                    //        }
+                                                    //        else {
+
+                                                    //            window.location = "/Person/Index";
+                                                    //            $("#myModal").modal('show');
+
+
+                                                    //        }
+
+
+
+                                                    //        //if (result.success) {
+                                                    //        //    $('#myModal').modal('hide');
+                                                    //        //    $('#replacetarget').load(result.url); //  Load data from the server and place the returned HTML into the matched element
+                                                    //        //} else {
+                                                    //        //    $('#myModalContent').html(result);
+                                                    //        //    bindForm(dialog);
+                                                    //        //    debugger
+                                                    //        //}
+                                                    //    },
+                                                    //    error: function (result) {
+
+                                                    //    }
+
+                                                    //});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                //function submitform() {
+                                                //    var postdata = $('#login-form').serialize();
+                                                //    var file = document.getElementById('files').files[0];
+                                                //    var username = document.getElementById('username').value;
+                                                //    var password = document.getElementById('password').value;
+                                                //    var fd = new FormData();
+                                                //    fd.append("files", file);
+                                                //    fd.append("username", username);
+                                                //    fd.append("password", password);
+                                                //    var xhr = new XMLHttpRequest();
+                                                //    xhr.open("POST", "/Home/Index", false);
+                                                //    xhr.send(fd);
+
+                                                //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                //$("#btnAdd").click(function (event) {
+                                                //    event.preventDefault();
+
+                                                //    //var person = new FormData();
+                                                //    //person.append("Name", $("#Name").val());
+                                                //    //person.append("Description", $("#Description").val())
+                                                //    //person.append("FilePosted", $("#Image").files[0])
+
+                                                //    var Data = new FormData();
+
+                                                //    Data.append("Name", $('#Name').val());
+                                                //    Data.append("Description", $('#Description').val())
+                                                //    var Imagefile = $("#Image").get(0).files;
+                                                //    Data.append("Imagefile", Imagefile[0])
+
+
+
+                                                //   /* var formData = new FormData($(this)[0]);*/
+                                                //    $.ajax({
+                                                //        url: "/Person/Create",
+                                                //        type: "POST",
+
+                                                //        contentType: false,
+                                                //        processData: false,
+                                                //        data: Data,
+                                                //        success: function (result) {
+                                                //            if (result.success) {
+                                                //                $('#myModal').modal('hide');
+                                                //                $('#replacetarget').load(result.url); //  Load data from the server and place the returned HTML into the matched element
+                                                //            } else {
+                                                //                $('#myModalContent').html(result);
+                                                //                bindForm(dialog);
+                                                //                debugger
+                                                //            }
+                                                //        }
+                                                //    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                //    //var result = $("#form").serialize();
+                                                //    //debugger
+                                                //    //var person = new FormData();
+                                                //    //person.append("Name", $("#Name").val());
+                                                //    //person.append("Description", $("#Description").val())
+                                                //    //person.append("FilePosted", $("#Image").files[0])
+                                                //    //var std = {};
+                                                //    //std.Name = $("#Name").val();
+                                                //    // std.Description = $("#Description").val();
+                                                //    // std.
+                                                //    //$.post({
+                                                //    //    type: "POST",
+                                                //    //    url: "/Person/CreatePost",
+                                                //    //    data: result,
+                                                //    //    success: function () {
+                                                //    //        debugger
+                                                //    //         alert("Data has been added successfully.");
+                                                //    //        window.location = "/Person/Index";
+                                                //    //        $("#myModal").modal("hide");
+                                                //    //    },
+                                                //    //    error: function () {
+                                                //    //        debugger
+                                                //    //        alert("Error while inserting data");
+                                                //    //        $("#myModal").modal("hide");
+                                                //    //    }
+                                                //    //});
+
+
+                                                //});
+
+
+
+
+
+
+
+
+    </script>

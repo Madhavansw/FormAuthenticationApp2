@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+    <form id="form" enctype="multipart/form-data">
+
+        <div>
+
+            <div>
+                <label for="Name">Name </label>
+                <input type="text" id="Name" />
+            </div>
+            <div>
+                <label for="Password">Password</label>
+                <input type="password" id="Password" />
+            </div>
+            <div>
+                <label for="Description">Description</label>
+                <input type="text" id="Description" />
+            </div>
+
+            <div>
+                <label for="ImageFile">ImageFile </label>
+                <input type="file" id="ImageFile" />
+            </div>
+            <div>
+                <label for="IsActive">IsActive</label>
+                <input type="checkbox" id="IsActive" />
+            </div>
+            <div>
+                <label for="IsTrained">IsTrained</label>
+                <input type="checkbox" id="IsTrained" />
+            </div>
+            <div>
+                <label for="Roles">Roles:</label>
+                <div id="Roles">
+                    <label for="Admin">
+                        Admin: <input type="checkbox" value="Admin" />
+                    </label>
+                    <br />
+                    <label for="Site">
+                        Site: <input type="checkbox" value="Site" />
+                    </label>
+                    <br />
+                    <label for="InterUploader">
+                        InterUploader: <input type="checkbox" value="InternalUploader" />
+                    </label>
+                    <br />
+                    <label for="DataReader">
+                        DataReader: <input type="checkbox" value="DataReader" />
+                    </label>
+                    <br />
+                    <label for="CostumCare">
+                        CostumCare: <input type="checkbox" value="CostumCare" />
+                    </label>
+                    <br />
+                    <label for="Support">
+                        Support: <input type="checkbox" value="Support" />
+                    </label>
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <input id="sample" type="submit" value="Post" />
+
+
+    </form>
+    <script src="Scripts/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript">
+
+      
+
+       
+
+
+        var submit = document.getElementById("sample");
+        submit.addEventListener("click", function () {
+
+
+            debugger
+            var form = document.getElementById("form");
+            var Name = document.getElementById("Name").value;
+            var Password = document.getElementById("Password").value;
+            var Description = document.getElementById("Description").value;
+            var ImageFile = document.getElementById("ImageFile").files[0];
+            var IsActive = document.getElementById("IsActive").checked;
+            var IsTrained = document.getElementById("IsTrained").checked;
+            var RolesList = document.getElementById("Roles");
+            var CheckList = RolesList.querySelectorAll("input[type='checkbox']");
+
+
+            var sample = [];
+
+            CheckList.forEach(x => {
+                if (x.checked) {
+                    sample.push(x.value);
+                }
+            });
+            debugger
+           
+
+            var FormResult = new FormData(form);
+
+            FormResult.append("Name", Name);
+            FormResult.append("Password", Password);
+            FormResult.append("Description", Description);
+            FormResult.append("FilePosted", ImageFile);
+            FormResult.append("IsActive", IsActive);
+            FormResult.append("IsTrained", IsTrained);
+            FormResult.append("Roles", sample);
+
+            //var post = fetch("~/Person/CreatePost", FormResult);
+
+            //var post = new XMLHttpRequest();
+            //post.open("post", "~/Person/CreatePost");
+            //post.send(FormResult);
+           
+           
+
+            $.ajax({
+                type: "POST",
+                url: "/Person/CreatePost",
+                data: FormResult,
+                processData: false,
+                contentType: false,
+               
+                success: function (response) {
+                    debugger
+                    if (response != null) {
+                        alert("Name : " + response.Name + ", Designation : " + response.Designation + ", Location :" + response.Location);
+                    } else {
+                        alert("Something went wrong");
+                    }
+                },
+                failure: function (response) {
+                    debugger
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    debugger
+                    alert(response.responseText);
+                }
+            });
+
+
+
+        });
+
+
+       
+
+    </script>
+
+</body>
+</html>

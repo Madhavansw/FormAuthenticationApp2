@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "ModelSample2";
+}
+
+
+<div class="container">
+    <h2>Employees Record</h2>
+    <button type="button" 
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#myModal"
+            onclick="clearTextBox();">Add New Employee</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Age
+                </th>
+                <th>
+                    State
+                </th>
+                <th>
+                    Country
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<h2>ModelSample2</h2>
+<div class="modal fade"
+     id="myModal"
+     aria-labelledby="myModelLabel"
+     aria-hidden="true"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" 
+                        class="close" 
+                        data-dismiss="modal">×</button>
+                <h4 class="modal-title" 
+                    id="myModalLabel">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="EmployeeId">ID</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="EmployeeID" 
+                               placeholder="Id" 
+                               disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="Name" 
+                               placeholder="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Age">Age</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="Age" 
+                               placeholder="Age" />
+                    </div>
+                    <div class="form-group">
+                        <label for="State">State</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="State" 
+                               placeholder="State" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">Country</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="Country" 
+                               placeholder="Country" />
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btnAdd"
+                        onclick="return Add();">
+                    Add
+                </button>
+                <button type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                        id="btnUpdate"
+                        style="display:none;"
+                        onclick="Update();">
+                    Update
+                </button>
+                <button type="button"
+                        class="btn btn-default" 
+                        data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.6.4.min.js">
+
+</script>
+<script type="text/javascript">
+
+    function clearTextBox() {
+
+     
+        $('#EmployeeID').val("");
+        $('#Name').val("");
+        $('#Age').val("");
+        $('#State').val("");
+        $('#Country').val("");
+        $('#btnUpdate').hide();
+        $('#btnAdd').show();
+        $('#Name').css('border-color', 'lightgrey');
+        $('#Age').css('border-color', 'lightgrey');
+        $('#State').css('border-color', 'lightgrey');
+        $('#Country').css('border-color', 'lightgrey');
+
+    }
+
+</script>
+

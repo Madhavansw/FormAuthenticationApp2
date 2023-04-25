@@ -1,0 +1,265 @@
+﻿@model IEnumerable<DropDownApp.Models.sampleEmp>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+    <input type="button" 
+           data-toggle="modal" 
+           data-target="#myModal"
+           value="AddEmployee"
+            />
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsTrained)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Roles)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Password)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LogOn)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsTrained)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Roles)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LogOn)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.EmpId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.EmpId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.EmpId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div class="container">
+    <h2>Employees Record</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
+           >Add New Employee</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Age
+                </th>
+                <th>
+                    State
+                </th>
+                <th>
+                    Country
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" 
+     id="myModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="EmployeeId">ID</label>
+                        <input type="text" class="form-control" id="EmployeeID" placeholder="Id" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" placeholder="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="Description" placeholder="Age" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ImageFile">ImageFile</label>
+                        <input type="file" class="form-control" id="ImageFile" placeholder="Select Image File" />
+                    </div>
+                    <div class="form-group">
+                        <label for="IsActive">IsActive</label>
+                        <input type="checkbox" class="form-control" id="IsActive" />
+                    </div>
+                    <div class="form-group">
+                        <label for="IsTrained">IsTrained</label>
+                        <input type="checkbox" class="form-control" id="IsTrained" placeholder="Country" />
+                    </div>
+                    <div class="form-group" id="Role">
+                        <label for="Admin">
+                            Admin: <input type="checkbox" name="Roles" value="Admin" />
+                        </label>
+                        <br />
+                        <label for="CRA">
+                            CRA: <input type="checkbox" name="Roles" value="CRA" />
+                        </label>
+                        <br />
+                        <label for="Data Reader">
+                            Data Reader: <input type="checkbox" name="Roles" value="Data Reader" />
+                        </label>
+                        <br />
+                        <label for="Internal Uploader">
+                            Internal Uploader: <input type="checkbox" name="Roles" value="InternalUploader" />
+                        </label>
+                        <br />
+                        <label for="Site">
+                            Site: <input type="checkbox" name="Roles" value="Site" />
+                        </label>
+                        <br />
+                        <label for="SU">
+                            Site User: <input type="checkbox" name="Roles" value="SU" />
+                        </label>
+                        <br />
+                        <label for="QM">
+                            QM: <input type="checkbox" name="Roles" value="QM" />
+                        </label>
+
+
+
+
+
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddEmp()">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    function AddEmp() {
+        var res = validate();
+        if (res == false) {
+            return false;
+        }
+
+        var checkboxList = document.getElementById("Role");
+
+        var checkList = checkboxList.querySelectorAll("input[type ='checkbox']");
+        var checkedList = [];
+        checkList.forEach(x => {
+            if (x.checked) {
+                checkedList.push(x.value);
+            }
+        });
+        var empObj = {
+           
+            Name: $('#Name').val(),
+            Description: $('#Description').val(),
+            IsActive: $('#IsActive').val(),
+            IsTrained: $('#IsTrained').val(),
+            ImageFile: $("#ImageFile").files[0],
+            Roles: checkedList
+        };
+        $.ajax({
+            url: "/AjaxCrud/AddEmp",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                debugger
+                $('#myModal').modal('hide');
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+
+    function validate() {
+        var isValid = true;
+        if ($('#Name').val().trim() == "") {
+            $('#Name').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#Name').css('border-color', 'lightgrey');
+        }
+        if ($('#Description').val().trim() == "") {
+            $('#Description').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#Description').css('border-color', 'lightgrey');
+        }
+        if ($('#IsActive').val().trim() == "") {
+            $('#IsActive').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#IsActive').css('border-color', 'lightgrey');
+        }
+        if ($('#IsTrained').val().trim() == "") {
+            $('#IsTrained').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#IsTrained').css('border-color', 'lightgrey');
+        }
+        return isValid;
+    }
+
+
+</script>
+
